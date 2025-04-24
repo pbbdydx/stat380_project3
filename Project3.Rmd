@@ -5,3 +5,57 @@ date:
 output: html_document
 ---
 
+
+1. In order to help you to understand more of the variables in the dataset, this problem uses ‘TotalXP’,
+‘XPType’ and ‘FullPartial’.
+
+• The ‘FullPartial’ variable takes on two values: Full or Partial. These values are a reference as to
+whether the player participated in the full match or only a part of the match. (Sometimes when
+joining a new game, a player is added to a match that is already in progress. This is indicated by a
+value of Partial in the FullPartial variable.) Since it is not fair to compare the total experience
+points earned (TotalXP) for a match in which the player only participated in a fraction of the
+match to the TotalXP for a match in which the player participated in the entire match, we want to
+remove the cases in which the player only participated in a fraction of the match.
+
+• The type of experience points earned (‘XPType’) variable takes on one of two possible values:
+10% Boost and Double XP + 10%. This variable is a reference to the way that the game calculates
+the number of experience points (XP). As an example, suppose that capturing an enemy location
+earns the player 50 experience points (XP). With the 10% Boost scoring, the player earns 55
+experience points (50 + 50*0.1). Under the Double XP + 10%, the player would earn 105
+experience points (50*2 + 50*0.1).
+
+After removing the cases in which the player only participated in a fraction of the match, create side-by-
+side boxplots showing the relationship between TotalXP and XPType. (Be sure to use proper axis labels
+rather than the variable names.) Supplement the plots with summary statistics of TotalXP for each level of
+XPType. What have you learned about the relationship between XPType and TotalXP?
+
+
+
+
+2. Suppose we wish to build an appropriate model for modeling the Score variable for games in which the
+player participated in the full match of a HC – TDM game type. We wish to answer the following
+research question: Of the predictors total XP, eliminations, deaths, damage, XPType, and whether the
+player’s team won, which should be included in a model for the Score? To answer this, you will have to
+create a new variable that indicates whether the player was on the winning team or not. NOTE: Since this
+is an inference question and we are not worried about how well the model will generalize to new data,
+there is no need to do a training/validation split in this problem.
+
+a. Implement LASSO regression and one other feature selection procedure that we covered in Lecture
+15. Include relevant plots, a discussion on which value of lambda you selected, the estimated
+equation from LASSO and the estimated equation from the second method. Discuss/compare the
+results of LASSO with those of the other method.
+
+b. (This material will be finished in lecture by Wednesday, April 23.) Build a regression tree for
+predicting Score using total XP, eliminations, deaths, damage, XPType, and whether the player’s
+team won. Specify that each node must contain at least 15 observations. Display the tree and
+report the variables associated with the 3 highest variable importance values. (Include the variable
+importance values when mentioning the variables.)
+
+c. When building linear regression models, we often wish to determine which variables are the most
+important. One way of doing this is to look at the magnitude (absolute value) of the estimated
+coefficients for the regression model built using standardized inputs (centered to have a mean of 0
+and a standard deviation of 1). Based on the variables selected by the other feature selection
+procedure from part a. (in other words, not the LASSO model), standardize the inputs, build the
+regression model, report the estimated equation, and report the 3 most important variables based
+on the magnitude (absolute value) of the estimated coefficients. How does this compare to the
+most important variables based on the regression tree?
