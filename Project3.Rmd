@@ -79,8 +79,8 @@ remove the cases in which the player only participated in a fraction of the matc
 
 • The type of experience points earned (‘XPType’) variable takes on one of two possible values:
 10% Boost and Double XP + 10%. This variable is a reference to the way that the game calculates
-the number of experience points (XP). As an example, suppose that capturing an enemy location
-earns the player 50 experience points (XP). With the 10% Boost scoring, the player earns 55
+the number of experience points (XP) As an example, suppose that capturing an enemy location
+earns the player 50 experience point.s (XP). With the 10% Boost scoring, the player earns 55
 experience points (50 + 50*0.1). Under the Double XP + 10%, the player would earn 105
 experience points (50*2 + 50*0.1).
 
@@ -100,15 +100,47 @@ create a new variable that indicates whether the player was on the winning team 
 is an inference question and we are not worried about how well the model will generalize to new data,
 there is no need to do a training/validation split in this problem.
 
-```{r}
-# import libraries and data 
-cod <- 
+```{r, message = FALSE}
+# import libraries for this question
+library(glmnet)
+library(rpart)
+library(rattle)
+
+# add column to indicate if players team won (strictly larger)
+cod_working$winning_team <- if_else(cod_working$team_result > cod_working$other_team_result, 1, 0)
+# new df just for this question
+cod_q2 <- cod_working %>% filter(game_type == 'HC - TDM')
 ```
 
 a. Implement LASSO regression and one other feature selection procedure that we covered in Lecture
 15. Include relevant plots, a discussion on which value of lambda you selected, the estimated
 equation from LASSO and the estimated equation from the second method. Discuss/compare the
 results of LASSO with those of the other method.
+
+Since we want to implement a lasso model and also select a value of lambda, it makes sense to use a cross validation approach to get the best lasso model.  
+```{r}
+# preparing data before modeling. (we will use xp_multiplier to stand as the xp_type variable since they are functionally the same thing)
+xmat = model.matrix(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team, data = cod_q2)[,-1]
+ymat <- cod_q2$score
+# implementing logistic regression with CV LASSO selection
+set.seed(123) 
+lasso_model <- cv.glmnet(x = xmat, y = ymat, lambda = NULL, standardize = T, nfolds = 10)
+plot(lasso_model)
+```
+
+```{r}
+# get coefficients from the lasso model with the minimum binomial deviance
+lasso_coeff <- predict(lasso_model, s = lasso_model$lambda.min, type = 'coefficients')
+lasso_coeff
+```
+
+```{r}
+# implementing glm with backwards best subset selection with AIC scoring
+null_model = lm(score ~ 1, data = cod_q2)
+full_model = lm(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team, data = cod_q2)
+
+step(object = full_model, scope = list(lower = null_model, upper = full_model), method = 'backwards')
+```
 
 b. (This material will be finished in lecture by Wednesday, April 23.) Build a regression tree for
 predicting Score using total XP, eliminations, deaths, damage, XPType, and whether the player’s
