@@ -97,7 +97,30 @@ side boxplots showing the relationship between TotalXP and XPType. (Be sure to u
 rather than the variable names.) Supplement the plots with summary statistics of TotalXP for each level of
 XPType. What have you learned about the relationship between XPType and TotalXP?
 
+```{r}
+boxplot(total_xp ~ xp_multiplier, data = cod_working,
+        main = "Total Experience Points by XP Boost",
+        xlab = "Type of XP Boost",
+        ylab = "Total Experience Points")
 
+```
+
+```{r}
+
+cod_working %>%
+  group_by(xp_multiplier) %>%
+  summarise(
+    count = n(),
+    min = min(total_xp),
+    q1 = quantile(total_xp, 0.25),
+    median = median(total_xp),
+    mean = mean(total_xp),
+    q3 = quantile(total_xp, 0.75),
+    max = max(total_xp),
+    sd = sd(total_xp)
+  )
+
+```
 
 
 2. Suppose we wish to build an appropriate model for modeling the Score variable for games in which the
