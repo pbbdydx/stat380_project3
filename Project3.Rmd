@@ -147,6 +147,17 @@ team won. Specify that each node must contain at least 15 observations. Display 
 report the variables associated with the 3 highest variable importance values. (Include the variable
 importance values when mentioning the variables.)
 
+
+```{r}
+RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + Outcome,
+                 method = "anova",
+                 data = cod_working,
+                 minbucket = 15)
+
+fancyRpartPlot(RegTree,
+               cex = .7)
+```
+
 c. When building linear regression models, we often wish to determine which variables are the most
 important. One way of doing this is to look at the magnitude (absolute value) of the estimated
 coefficients for the regression model built using standardized inputs (centered to have a mean of 0
