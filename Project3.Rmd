@@ -156,6 +156,8 @@ RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multipli
 
 fancyRpartPlot(RegTree,
                cex = .7)
+
+RegTree$variable.importance
 ```
 
 c. When building linear regression models, we often wish to determine which variables are the most
