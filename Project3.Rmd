@@ -77,6 +77,14 @@ points earned (TotalXP) for a match in which the player only participated in a f
 match to the TotalXP for a match in which the player participated in the entire match, we want to
 remove the cases in which the player only participated in a fraction of the match.
 
+
+```{r}
+cod_working <-
+  cod_working %>%
+  filter(full_partial == "Full")
+```
+
+
 • The type of experience points earned (‘XPType’) variable takes on one of two possible values:
 10% Boost and Double XP + 10%. This variable is a reference to the way that the game calculates
 the number of experience points (XP). As an example, suppose that capturing an enemy location
