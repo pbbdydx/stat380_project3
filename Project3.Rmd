@@ -6,9 +6,13 @@ output: html_document
 ---
 
 ## Front Matter
-```{r}
+```{r, message = F}
 library(tidyverse)
 library(readxl)
+library(glmnet)
+library(rpart)
+library(rattle)
+
 cod <- read_excel('CODGames2_mp.xlsx', sheet = 1)
 ```
 
@@ -105,8 +109,8 @@ boxplot(total_xp ~ xp_multiplier, data = cod_working,
 
 ```
 
-```{r}
 
+```{r}
 cod_working %>%
   group_by(xp_multiplier) %>%
   summarise(
@@ -131,12 +135,7 @@ create a new variable that indicates whether the player was on the winning team 
 is an inference question and we are not worried about how well the model will generalize to new data,
 there is no need to do a training/validation split in this problem.
 
-```{r, message = FALSE}
-# import libraries for this question
-library(glmnet)
-library(rpart)
-library(rattle)
-
+```{r}
 # add column to indicate if players team won (strictly larger)
 cod_working$winning_team <- if_else(cod_working$team_result > cod_working$other_team_result, 1, 0)
 # new df just for this question
@@ -181,15 +180,17 @@ importance values when mentioning the variables.)
 
 
 ```{r}
-RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + Outcome,
+RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team,
                  method = "anova",
                  data = cod_working,
                  minbucket = 15)
 
 fancyRpartPlot(RegTree,
                cex = .7)
+```
 
-RegTree$variable.importance
+```{r}
+print(100*RegTree$variable.importance/sum(RegTree$variable.importance))
 ```
 
 c. When building linear regression models, we often wish to determine which variables are the most
