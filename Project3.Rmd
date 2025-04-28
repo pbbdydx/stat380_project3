@@ -157,25 +157,26 @@ Since we want to implement a lasso model and also select a value of lambda, it m
 # preparing data before modeling. (we will use xp_multiplier to stand as the xp_type variable since they are functionally the same thing)
 xmat = model.matrix(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team, data = cod_q2)[,-1]
 ymat <- cod_q2$score
-# implementing logistic regression with CV LASSO selection
+# implementing regression with CV LASSO selection
 set.seed(123) 
 lasso_model <- cv.glmnet(x = xmat, y = ymat, lambda = NULL, standardize = T, nfolds = 10)
 plot(lasso_model)
 ```
 
 ```{r}
-# get coefficients from the lasso model with the minimum binomial deviance
+# get coefficients from the lasso model with the minimum square error
 lasso_coeff <- predict(lasso_model, s = lasso_model$lambda.min, type = 'coefficients')
 lasso_coeff
 ```
 
 ```{r}
-# implementing glm with backwards best subset selection with AIC scoring
+# implementing lm with backwards best subset selection with AIC scoring
 null_model = lm(score ~ 1, data = cod_q2)
 full_model = lm(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team, data = cod_q2)
 
 step(object = full_model, scope = list(lower = null_model, upper = full_model), method = 'backwards')
 ```
+
 To model Score, we first used LASSO regression with 10-fold cross-validation. The LASSO model selected all six predictors: total_xp, eliminations, deaths, damage, xp_multiplier, and winning_team. None of the variables were eliminated, although the damage coefficient was relatively small compared to the others. We also performed backward stepwise regression using AIC as the selection criterion. Backward stepwise selected five predictors: total_xp, eliminations, deaths, xp_multiplier, and winning_team, removing damage from the model. Comparing the two methods, we observe that LASSO tends to shrink smaller coefficients toward zero but kept damage in the model, while backward stepwise removed it completely based on AIC considerations. Overall, both methods consistently identified total_xp, eliminations, deaths, xp_multiplier, and winning_team as important predictors for modeling Score.
 
 b. (This material will be finished in lecture by Wednesday, April 23.) Build a regression tree for
@@ -183,7 +184,6 @@ predicting Score using total XP, eliminations, deaths, damage, XPType, and wheth
 team won. Specify that each node must contain at least 15 observations. Display the tree and
 report the variables associated with the 3 highest variable importance values. (Include the variable
 importance values when mentioning the variables.)
-
 
 ```{r}
 RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multiplier + winning_team,
@@ -211,14 +211,11 @@ on the magnitude (absolute value) of the estimated coefficients. How does this c
 most important variables based on the regression tree?
 
 ```{r}
-cod_q2_standardized <- cod_q2 %>%
-  mutate(
-    total_xp = scale(total_xp),
-    eliminations = scale(eliminations),
-    deaths = scale(deaths),
-    xp_multiplier = scale(xp_multiplier),
-    winning_team = scale(winning_team)
-  )
+xvars = c('total_xp', 'eliminations', 'deaths', 'xp_multiplier', 'winning_team')
+
+cod_q2_standardized <- cod_q2 
+
+cod_q2_standardized[, xvars] <- scale(cod_q2[, xvars], center = T, scale = T)
 
 standard_model <- lm(score ~ total_xp + eliminations + deaths + xp_multiplier + winning_team, data = cod_q2_standardized)
 
