@@ -125,6 +125,11 @@ cod_working %>%
   )
 
 ```
+After filtering to full matches, we compared TotalXP between players with a 10% Boost and players with Double XP + 10%.
+The boxplots show that players with Double XP + 10% earned much higher TotalXP on average.
+Summary statistics support this: the mean TotalXP under Double XP + 10% was significantly higher, with greater spread, compared to the 10% Boost group.
+
+Thus, the type of XP boost clearly impacts the total experience points earned.
 
 
 2. Suppose we wish to build an appropriate model for modeling the Score variable for games in which the
@@ -171,6 +176,7 @@ full_model = lm(score ~ total_xp + eliminations + deaths + damage + xp_multiplie
 
 step(object = full_model, scope = list(lower = null_model, upper = full_model), method = 'backwards')
 ```
+To model Score, we first used LASSO regression with 10-fold cross-validation. The LASSO model selected all six predictors: total_xp, eliminations, deaths, damage, xp_multiplier, and winning_team. None of the variables were eliminated, although the damage coefficient was relatively small compared to the others. We also performed backward stepwise regression using AIC as the selection criterion. Backward stepwise selected five predictors: total_xp, eliminations, deaths, xp_multiplier, and winning_team, removing damage from the model. Comparing the two methods, we observe that LASSO tends to shrink smaller coefficients toward zero but kept damage in the model, while backward stepwise removed it completely based on AIC considerations. Overall, both methods consistently identified total_xp, eliminations, deaths, xp_multiplier, and winning_team as important predictors for modeling Score.
 
 b. (This material will be finished in lecture by Wednesday, April 23.) Build a regression tree for
 predicting Score using total XP, eliminations, deaths, damage, XPType, and whether the player’s
@@ -193,6 +199,8 @@ fancyRpartPlot(RegTree,
 print(100*RegTree$variable.importance/sum(RegTree$variable.importance))
 ```
 
+We built a regression tree to predict Score based on the six predictors, requiring each terminal node to contain at least 15 observations. Based on the variable importance values from the tree, the three most important variables were damage (39.63%), eliminations (37.36%), and total_xp (10.96%). This suggests that the player's damage dealt and number of eliminations were the strongest predictors of their score, followed by their total experience points earned. These results are consistent with the findings from the linear modeling approaches, where damage and eliminations also appeared among the top predictors.
+
 c. When building linear regression models, we often wish to determine which variables are the most
 important. One way of doing this is to look at the magnitude (absolute value) of the estimated
 coefficients for the regression model built using standardized inputs (centered to have a mean of 0
@@ -201,3 +209,19 @@ procedure from part a. (in other words, not the LASSO model), standardize the in
 regression model, report the estimated equation, and report the 3 most important variables based
 on the magnitude (absolute value) of the estimated coefficients. How does this compare to the
 most important variables based on the regression tree?
+
+```{r}
+cod_q2_standardized <- cod_q2 %>%
+  mutate(
+    total_xp = scale(total_xp),
+    eliminations = scale(eliminations),
+    deaths = scale(deaths),
+    xp_multiplier = scale(xp_multiplier),
+    winning_team = scale(winning_team)
+  )
+
+standard_model <- lm(score ~ total_xp + eliminations + deaths + xp_multiplier + winning_team, data = cod_q2_standardized)
+
+summary(standard_model)
+```
+Using the predictors selected by backward stepwise selection, we standardized total_xp, eliminations, deaths, xp_multiplier, and winning_team before fitting a linear regression model. Based on the magnitude of the standardized coefficients, the three most important variables were eliminations (coefficient = 1030.92), total_xp (coefficient = 382.88), and deaths (coefficient = -276.49). Eliminations had by far the largest impact on the player’s score among the predictors. Compared to the regression tree, which also highlighted eliminations and damage as important variables, the standardized regression model confirmed that eliminations is the strongest predictor, while total_xp and deaths also had substantial effects.
