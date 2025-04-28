@@ -1,7 +1,7 @@
 ---
 title: "Project3"
-author: 
-date:
+author: Dylan Bauer, Prajwal Bhandari, Cameron Moore
+date: April 28, 2025
 output: html_document
 ---
 
@@ -192,7 +192,9 @@ RegTree <- rpart(score ~ total_xp + eliminations + deaths + damage + xp_multipli
                  minbucket = 15)
 
 fancyRpartPlot(RegTree,
-               cex = .7)
+               cex = .7,
+               main = 'Regression Tree for Predicting Game Score',
+               sub = "")
 ```
 
 ```{r}
