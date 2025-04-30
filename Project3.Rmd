@@ -230,4 +230,4 @@ Using the predictors selected by backward stepwise selection, we standardized to
 
 ## Discussion of group contributions
 
-Dylan and Prajwal worked on the code while Cameron did the write up. We found that doing all the code first and then write up second allowed for a more consistent code and writing style throughout the project.
+Dylan and Prajwal worked on most of the code while Cameron did the write up and code for 2c. We found that doing all the code first and then write up second allowed for a more consistent code and writing style throughout the project.
