@@ -226,3 +226,8 @@ summary(standard_model)
 ```
 
 Using the predictors selected by backward stepwise selection, we standardized total_xp, eliminations, deaths, xp_multiplier, and winning_team before fitting a linear regression model. Based on the magnitude of the standardized coefficients, the three most important variables were eliminations (coefficient = 1030.92), total_xp (coefficient = 382.88), and deaths (coefficient = -276.49). Eliminations had by far the largest impact on the player’s score among the predictors. Compared to the regression tree, which also highlighted eliminations and damage as important variables, the standardized regression model confirmed that eliminations is the strongest predictor, while total_xp and deaths also had substantial effects.
+
+
+## Discussion of group contributions
+
+Dylan and Prajwal worked on the code while Cameron did the write up. We found that doing all the code first and then write up second allowed for a more consistent code and writing style throughout the project.
