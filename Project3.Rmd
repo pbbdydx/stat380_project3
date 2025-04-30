@@ -125,9 +125,10 @@ cod_working %>%
   )
 
 ```
+
 After filtering to full matches, we compared TotalXP between players with a 10% Boost and players with Double XP + 10%.
 The boxplots show that players with Double XP + 10% earned much higher TotalXP on average.
-Summary statistics support this: the mean TotalXP under Double XP + 10% was significantly higher, with greater spread, compared to the 10% Boost group.
+Summary statistics support this: the mean TotalXP under Double XP + 10% was significantly higher, although with greater spread ($\sigma$ = 6649 vs $\sigma$ =  2606) compared to the 10% Boost group.
 
 Thus, the type of XP boost clearly impacts the total experience points earned.
 
@@ -177,7 +178,7 @@ full_model = lm(score ~ total_xp + eliminations + deaths + damage + xp_multiplie
 step(object = full_model, scope = list(lower = null_model, upper = full_model), method = 'backwards')
 ```
 
-To model Score, we first used LASSO regression with 10-fold cross-validation. The LASSO model selected all six predictors: total_xp, eliminations, deaths, damage, xp_multiplier, and winning_team. None of the variables were eliminated, although the damage coefficient was relatively small compared to the others. We also performed backward stepwise regression using AIC as the selection criterion. Backward stepwise selected five predictors: total_xp, eliminations, deaths, xp_multiplier, and winning_team, removing damage from the model. Comparing the two methods, we observe that LASSO tends to shrink smaller coefficients toward zero but kept damage in the model, while backward stepwise removed it completely based on AIC considerations. Overall, both methods consistently identified total_xp, eliminations, deaths, xp_multiplier, and winning_team as important predictors for modeling Score.
+To model Score, we first used LASSO regression with 10-fold cross-validation. The LASSO model selected all six predictors: total_xp, eliminations, deaths, damage, xp_multiplier, and winning_team. None of the variables were eliminated, although the damage and total_xp coefficients were much smaller compared to the others. The best equation to model score using LASSO regression is $$ \hat{Score} = 1334.88 + 0.05x_{total\_xp} + 159.13 x_{eliminations} -72.77x_{deaths}+0.94x_{damage}-361.57x_{xp\_multiplier}-447.19x_{winning\_team}$$ We also performed backward stepwise regression using AIC as the selection criterion. Backward stepwise selected five predictors: total_xp, eliminations, deaths, xp_multiplier, and winning_team, removing damage from the model. With subset selection, the optimal equation to predict score is $$ \hat{Score} = 1334.88 + 0.06x_{total\_xp} + 185.24x_{eliminations} -73.25x_{deaths}-367.94x_{xp\_multiplier}-454.44x_{winning\_team}$$ Comparing the two methods, we observe that LASSO tends to shrink smaller coefficients toward zero but kept `damage` in the model, while backward stepwise removed it completely based on AIC considerations. Overall, both methods identified `total_xp`, `eliminations`, `deaths`, `xp_multiplier`, and `winning_team` as the most significant predictors for predicting `score`.
 
 b. (This material will be finished in lecture by Wednesday, April 23.) Build a regression tree for
 predicting Score using total XP, eliminations, deaths, damage, XPType, and whether the player’s
@@ -223,4 +224,5 @@ standard_model <- lm(score ~ total_xp + eliminations + deaths + xp_multiplier + 
 
 summary(standard_model)
 ```
+
 Using the predictors selected by backward stepwise selection, we standardized total_xp, eliminations, deaths, xp_multiplier, and winning_team before fitting a linear regression model. Based on the magnitude of the standardized coefficients, the three most important variables were eliminations (coefficient = 1030.92), total_xp (coefficient = 382.88), and deaths (coefficient = -276.49). Eliminations had by far the largest impact on the player’s score among the predictors. Compared to the regression tree, which also highlighted eliminations and damage as important variables, the standardized regression model confirmed that eliminations is the strongest predictor, while total_xp and deaths also had substantial effects.
